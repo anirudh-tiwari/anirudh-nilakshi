@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import ProposalCard from './components/ProposalCard';
 import OurStory from './components/OurStory';
 import PetalFall from './components/PetalFall';

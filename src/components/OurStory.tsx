@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
-import { Heart, Sparkles, Image as ImageIcon, FileText, ChevronRight, ChevronLeft, X, RotateCcw } from 'lucide-react';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Heart, Image as ImageIcon, ChevronRight, X, RotateCcw } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface TimelineSection {
@@ -26,7 +26,6 @@ const OurStory = ({ onReset }: { onReset: () => void }) => {
   const [activeStep, setActiveStep] = useState(1);
   const [selectedMemory, setSelectedMemory] = useState<TimelineSection | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   const handleNext = () => {
     if (activeStep < timelineData.length) {
@@ -123,7 +122,7 @@ const OurStory = ({ onReset }: { onReset: () => void }) => {
   );
 };
 
-const TimelineStep = ({ step, isActive, isUnlocked, isCompleted, onClick }: any) => {
+const TimelineStep = ({ step, isActive, isUnlocked, onClick }: any) => {
   return (
     <div id={`step-${step.id}`} className="relative group">
       {/* Timeline Dot */}
@@ -192,16 +191,6 @@ const TimelineStep = ({ step, isActive, isUnlocked, isCompleted, onClick }: any)
 const MemoryModal = ({ memory, onClose, onNext, isLast }: any) => {
   const [currentImg, setCurrentImg] = useState(0);
   const totalImages = memory.images.length;
-
-  const handlePrevImg = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCurrentImg(prev => (prev > 0 ? prev - 1 : prev));
-  };
-
-  const handleNextImg = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCurrentImg(prev => (prev < totalImages - 1 ? prev + 1 : prev));
-  };
 
   return (
     <motion.div 
