@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Image as ImageIcon, ChevronRight, X, RotateCcw } from 'lucide-react';
+import { Heart, Image as ImageIcon, ChevronRight, ChevronLeft, X, RotateCcw } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface TimelineSection {
@@ -11,16 +11,24 @@ interface TimelineSection {
 }
 
 const timelineData: TimelineSection[] = [
-  { id: 1, title: "The First Unexpected Meeting ❤️", subtitle: "2 Years Ago", images: ["/image1.jpeg", "/section01.png"] },
-  { id: 2, title: "The Arrange Marriage Meeting ❤️", subtitle: "14 March 2026", images: ["/image2.jpeg","/section11.jpeg", "/section12.png"] },
-  { id: 3, title: "Slowly Becoming Comfortable ❤️", subtitle: "The Beginning", images: ["/image3.jpeg", "/section21.jpeg", "/section22.jpeg"] },
-  { id: 4, title: "The Roka Day ❤️", subtitle: "19 April 2026", images: ["/image4.jpeg","/section31.jpeg","/section32.jpeg","/section33.jpeg"] },
-  { id: 5, title: "Our First Date ❤️", subtitle: "21 April 2026", images: ["/image5.jpeg","/section41.jpeg","/section42.jpeg"] },
-  { id: 6, title: "Falling In Love ❤️", subtitle: "Long Calls & Video Calls", images: ["/image6.jpeg","/section51.jpeg","/section52.jpeg"] },
-  { id: 7, title: "Seeing You In Lehenga ❤️", subtitle: "Delhi Meeting", images: ["/image7.jpeg","/section61.jpeg","/section62.jpeg"] },
-  { id: 8, title: "The Birthday Surprise ❤️", subtitle: "The Most Emotional Moment", images: ["/image8.jpeg","/section71.jpeg","/section72.jpeg", "section73.jpeg"] },
-  { id: 9, title: "HAPPY BIRTHDAY MY LOVE ❤️", subtitle: "Forever & Always", images: ["/image9.jpeg"] },
+  { id: 1, title: "The First Unexpected Meeting ❤️", subtitle: "2 Years Ago", images: ["image1.jpeg", "section01.png"] },
+  { id: 2, title: "The Arrange Marriage Meeting ❤️", subtitle: "14 March 2026", images: ["image2.jpeg", "section11.jpeg", "section12.png"] },
+  { id: 3, title: "Slowly Becoming Comfortable ❤️", subtitle: "The Beginning", images: ["image3.jpeg", "section21.jpeg", "section22.jpeg"] },
+  { id: 4, title: "The Roka Day ❤️", subtitle: "19 April 2026", images: ["image4.jpeg", "section31.jpeg", "section32.jpeg", "section33.jpeg"] },
+  { id: 5, title: "Our First Date ❤️", subtitle: "21 April 2026", images: ["image5.jpeg", "section41.jpeg", "section42.jpeg"] },
+  { id: 6, title: "Falling In Love ❤️", subtitle: "Long Calls & Video Calls", images: ["image6.jpeg", "section51.jpeg", "section52.jpeg"] },
+  { id: 7, title: "Seeing You In Lehenga ❤️", subtitle: "Delhi Meeting", images: ["image7.jpeg", "section61.jpeg", "section62.jpeg"] },
+  { id: 8, title: "The Birthday Surprise ❤️", subtitle: "The Most Emotional Moment", images: ["image8.jpeg", "section71.jpeg", "section72.jpeg", "section73.jpeg"] },
+  { id: 9, title: "HAPPY BIRTHDAY MY LOVE ❤️", subtitle: "Forever & Always", images: ["image9.jpeg"] },
 ];
+
+const getAssetPath = (path: string) => {
+  if (!path) return '';
+  const base = import.meta.env.BASE_URL;
+  const cleanBase = base.endsWith('/') ? base : `${base}/`;
+  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  return `${cleanBase}${cleanPath}`;
+};
 
 const OurStory = ({ onReset }: { onReset: () => void }) => {
   const [activeStep, setActiveStep] = useState(1);
@@ -167,7 +175,7 @@ const TimelineStep = ({ step, isActive, isUnlocked, onClick }: any) => {
           <div className="relative h-48 w-full rounded-2xl bg-[#f8e1e7]/20 border border-white/40 flex items-center justify-center overflow-hidden">
              {/* Blurred Image Background */}
              <img 
-               src={step.images[0]} 
+               src={getAssetPath(step.images[0])} 
                alt="" 
                className="absolute inset-0 w-full h-full object-cover blur-md opacity-40 scale-110"
              />
@@ -192,6 +200,16 @@ const MemoryModal = ({ memory, onClose, onNext, isLast }: any) => {
   const [currentImg, setCurrentImg] = useState(0);
   const totalImages = memory.images.length;
 
+  const handlePrevImg = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentImg(prev => (prev > 0 ? prev - 1 : prev));
+  };
+
+  const handleNextImg = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentImg(prev => (prev < totalImages - 1 ? prev + 1 : prev));
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -204,69 +222,119 @@ const MemoryModal = ({ memory, onClose, onNext, isLast }: any) => {
         animate={{ scale: 1, y: 0, opacity: 1 }}
         exit={{ scale: 0.9, y: 50, opacity: 0 }}
         transition={{ type: "spring", damping: 25 }}
-        className="relative w-full max-w-4xl h-fit max-h-[98vh] md:max-h-[95vh] bg-white rounded-[32px] md:rounded-[40px] shadow-[0_30px_100px_rgba(139,30,63,0.15)] border border-white flex flex-col overflow-hidden"
+        className="relative w-full max-w-4xl bg-white rounded-[32px] md:rounded-[40px] shadow-[0_30px_100px_rgba(139,30,63,0.15)] border border-white flex flex-col overflow-hidden h-fit max-h-[95vh]"
       >
         {/* Compact Sticky Header */}
-        <div className="sticky top-0 z-50 w-full px-6 py-3 md:px-10 md:py-4 bg-white/90 backdrop-blur-md border-b border-[#f8e1e7] flex items-center justify-between">
-           <div className="flex-1">
-              <h2 className="text-lg md:text-2xl font-serif font-bold text-[#8b1e3f] leading-tight">{memory.title}</h2>
-              <p className="text-[10px] md:text-sm italic text-[#d63384]/60">{memory.subtitle}</p>
+        <div className="sticky top-0 z-50 w-full px-6 py-3 md:px-10 md:py-4 bg-white/90 backdrop-blur-md border-b border-[#f8e1e7] flex items-center justify-between gap-4 shrink-0">
+           <div className="flex-1 min-w-0">
+              <h2 className="text-lg md:text-2xl font-serif font-bold text-[#8b1e3f] leading-tight truncate">{memory.title}</h2>
+              <p className="text-[10px] md:text-sm italic text-[#d63384]/60 truncate">{memory.subtitle}</p>
            </div>
+
            <button 
              onClick={onClose}
-             className="p-1.5 md:p-2 hover:bg-[#f8e1e7] rounded-full transition-colors shadow-sm border border-[#f8e1e7]"
+             className="shrink-0 p-1.5 md:p-2 hover:bg-[#f8e1e7] rounded-full transition-colors shadow-sm border border-[#f8e1e7]"
            >
              <X className="w-4 h-4 md:w-5 md:h-5 text-[#d63384]" />
            </button>
         </div>
 
         {/* Content Area - Maximized for Image clarity */}
-        <div className="flex-1 bg-[#fff6f8]/30 overflow-hidden flex flex-col">
-          <div className="flex-1 relative flex items-center justify-center p-0">
+        <div className="relative bg-white flex items-center justify-center overflow-hidden min-h-0">
+          <div className="relative w-full flex items-center justify-center">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentImg}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.4 }}
-                className="w-full h-full flex items-center justify-center"
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.2}
+                onDragEnd={(_, info) => {
+                  const swipeThreshold = 50;
+                  if (info.offset.x > swipeThreshold && currentImg > 0) {
+                    setCurrentImg(prev => prev - 1);
+                  } else if (info.offset.x < -swipeThreshold && currentImg < totalImages - 1) {
+                    setCurrentImg(prev => prev + 1);
+                  }
+                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="flex items-center justify-center relative w-full touch-none"
               >
                  <img 
-                   src={memory.images[currentImg]} 
+                   src={getAssetPath(memory.images[currentImg])} 
                    alt={`Memory ${currentImg + 1}`}
-                   className="max-w-full max-h-full object-contain mx-auto"
+                   className="w-auto h-auto max-w-full max-h-[calc(95vh-120px)] block object-contain shadow-inner"
                  />
+                 
+                 {/* Desktop Only Side Arrows */}
+                 <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 hidden md:flex justify-between px-4 pointer-events-none w-full">
+                   {currentImg > 0 && (
+                     <button
+                       onClick={handlePrevImg}
+                       className="pointer-events-auto p-3 bg-white/80 hover:bg-white backdrop-blur-md rounded-full shadow-lg transition-all border border-[#f8e1e7]"
+                     >
+                       <ChevronLeft className="w-6 h-6 text-[#d63384]" />
+                     </button>
+                   )}
+                   <div />
+                   {currentImg < totalImages - 1 && (
+                     <button
+                       onClick={handleNextImg}
+                       className="pointer-events-auto p-3 bg-white/80 hover:bg-white backdrop-blur-md rounded-full shadow-lg transition-all border border-[#f8e1e7]"
+                     >
+                       <ChevronRight className="w-6 h-6 text-[#d63384]" />
+                     </button>
+                   )}
+                 </div>
+
+                 {/* Next/Complete Button - Desktop Only Overlay */}
+                 {currentImg === totalImages - 1 && (
+                   <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 hidden md:block">
+                     <motion.button
+                       initial={{ opacity: 0, y: 20 }}
+                       animate={{ opacity: 1, y: 0 }}
+                       onClick={onNext}
+                       className="px-10 py-3.5 bg-[#d63384] text-white rounded-full font-bold shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 border-2 border-white/20 backdrop-blur-sm"
+                     >
+                       {isLast ? "Complete Our Story ❤️" : "Next Memory ❤️"}
+                       <ChevronRight className="w-5 h-5" />
+                     </motion.button>
+                   </div>
+                 )}
               </motion.div>
             </AnimatePresence>
           </div>
         </div>
 
-        {/* Sticky Footer - Navigation and Actions (Doesn't overlap image) */}
-        <div className="sticky bottom-0 z-50 w-full px-6 py-4 md:py-6 bg-white/95 backdrop-blur-md border-t border-[#f8e1e7] flex flex-col items-center gap-4">
-           {/* Pagination Dots */}
-           <div className="flex gap-2">
-             {Array.from({ length: totalImages }).map((_, i) => (
-               <button
-                 key={i}
-                 onClick={() => setCurrentImg(i)}
-                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                   currentImg === i ? 'bg-[#d63384] w-6' : 'bg-[#d63384]/20'
-                 }`}
-               />
-             ))}
-           </div>
+        {/* Mobile-only Footer - Pagination and Action Button */}
+        <div className="md:hidden p-6 bg-white border-t border-[#f8e1e7] flex flex-col items-center gap-6 shrink-0">
+           {/* Mobile Dots - Only show if button is NOT visible */}
+           {currentImg !== totalImages - 1 && (
+             <div className="flex gap-1.5 bg-black/5 p-2 rounded-full">
+               {Array.from({ length: totalImages }).map((_, i) => (
+                 <button
+                   key={i}
+                   onClick={() => setCurrentImg(i)}
+                   className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                     currentImg === i ? 'bg-[#d63384] w-4' : 'bg-[#d63384]/20'
+                   }`}
+                 />
+               ))}
+             </div>
+           )}
 
-           {/* Next/Complete Button - Only on last image */}
+           {/* Mobile Next/Complete Button */}
            {currentImg === totalImages - 1 && (
              <motion.button
                initial={{ opacity: 0, scale: 0.9 }}
                animate={{ opacity: 1, scale: 1 }}
                onClick={onNext}
-               className="group px-10 py-3 bg-[#d63384] text-white rounded-full font-bold shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+               className="w-full py-4 bg-[#d63384] text-white rounded-full font-bold shadow-lg flex items-center justify-center gap-2"
              >
                {isLast ? "Complete Our Story ❤️" : "Next Memory ❤️"}
-               <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+               <ChevronRight className="w-5 h-5" />
              </motion.button>
            )}
         </div>
