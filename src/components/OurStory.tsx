@@ -509,7 +509,7 @@ const FinalScreen = ({ onReplay }: any) => {
 
         <button
           onClick={onReplay}
-          className="flex items-center gap-3 px-10 py-4 bg-white border-2 border-[#f8e1e7] text-[#d63384] rounded-full font-bold shadow-xl hover:bg-[#fff6f8] transition-all transform hover:scale-105 active:scale-95 mx-auto"
+          className="hidden md:flex items-center gap-3 px-10 py-4 bg-white border-2 border-[#f8e1e7] text-[#d63384] rounded-full font-bold shadow-xl hover:bg-[#fff6f8] transition-all transform hover:scale-105 active:scale-95 mx-auto"
         >
           <RotateCcw className="w-5 h-5" />
           Replay From Start ❤️
