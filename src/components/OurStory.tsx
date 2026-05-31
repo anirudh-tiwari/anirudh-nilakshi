@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Image as ImageIcon, ChevronRight, ChevronLeft, X, RotateCcw } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -34,6 +34,42 @@ const OurStory = ({ onReset }: { onReset: () => void }) => {
   const [activeStep, setActiveStep] = useState(1);
   const [selectedMemory, setSelectedMemory] = useState<TimelineSection | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
+
+  // Orchestrated preloading
+  useEffect(() => {
+    // 1. High Priority: Preload first images of all sections
+    const highPriorityImages = timelineData.map(s => getAssetPath(s.images[0]));
+    
+    // 2. Medium Priority: Preload all other images
+    const remainingImages = timelineData.flatMap(s => s.images.slice(1)).map(p => getAssetPath(p));
+
+    const preload = (list: string[], priority: 'high' | 'low') => {
+      list.forEach(src => {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = src;
+        if (priority === 'high') {
+          link.setAttribute('fetchpriority', 'high');
+        }
+        document.head.appendChild(link);
+
+        // Also create Image object to trigger cache
+        const img = new Image();
+        img.src = src;
+      });
+    };
+
+    // Preload high priority immediately
+    preload(highPriorityImages, 'high');
+    
+    // Delay remaining images to avoid network congestion
+    const timer = setTimeout(() => {
+      preload(remainingImages, 'low');
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleNext = () => {
     if (activeStep < timelineData.length) {
@@ -196,6 +232,44 @@ const TimelineStep = ({ step, isActive, isUnlocked, onClick }: any) => {
   );
 };
 
+const ProgressiveImage = ({ src, alt, className, ...props }: any) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [currentSrc, setCurrentSrc] = useState(src);
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = src;
+    img.onload = () => {
+      setIsLoaded(true);
+      setCurrentSrc(src);
+    };
+  }, [src]);
+
+  return (
+    <div className={`relative overflow-hidden ${className}`}>
+      {/* Blurred Placeholder */}
+      {!isLoaded && (
+        <div className="absolute inset-0 bg-[#f8e1e7] animate-pulse flex items-center justify-center">
+          <Heart className="w-8 h-8 text-[#d63384]/20 animate-ping" />
+        </div>
+      )}
+      
+      <motion.img
+        {...props}
+        src={currentSrc}
+        alt={alt}
+        initial={{ opacity: 0, filter: 'blur(10px)' }}
+        animate={{ 
+          opacity: isLoaded ? 1 : 0,
+          filter: isLoaded ? 'blur(0px)' : 'blur(10px)'
+        }}
+        transition={{ duration: 0.5 }}
+        className={`${className} ${isLoaded ? '' : 'absolute inset-0'}`}
+      />
+    </div>
+  );
+};
+
 const MemoryModal = ({ memory, onClose, onNext, isLast }: any) => {
   const [currentImg, setCurrentImg] = useState(0);
   const totalImages = memory.images.length;
@@ -262,10 +336,11 @@ const MemoryModal = ({ memory, onClose, onNext, isLast }: any) => {
                 transition={{ duration: 0.3 }}
                 className="flex items-center justify-center relative w-full touch-none"
               >
-                 <img 
+                 <ProgressiveImage 
                    src={getAssetPath(memory.images[currentImg])} 
                    alt={`Memory ${currentImg + 1}`}
                    className="w-auto h-auto max-w-full max-h-[calc(95vh-120px)] block object-contain shadow-inner"
+                   fetchPriority="high"
                  />
                  
                  {/* Desktop Only Side Arrows */}
