@@ -6,10 +6,19 @@ import './App.css';
 
 function App() {
   const [phase, setPhase] = useState<'proposal' | 'story'>('proposal');
+  const isTrue = false;
 
   const handleStartStory = () => {
     setPhase('story');
   };
+
+  if (!isTrue) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-pearl text-2xl font-bold text-gray-800">
+        NOT WORKING
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen selection:bg-[#f5d0dc] overflow-x-hidden">
