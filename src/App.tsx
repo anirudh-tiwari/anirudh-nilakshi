@@ -6,7 +6,7 @@ import './App.css';
 
 function App() {
   const [phase, setPhase] = useState<'proposal' | 'story'>('proposal');
-  const isTrue = false;
+  const isTrue = true;
 
   const handleStartStory = () => {
     setPhase('story');

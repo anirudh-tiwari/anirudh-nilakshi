@@ -18,7 +18,7 @@ const timelineData: TimelineSection[] = [
   { id: 5, title: "Our First Date ❤️", subtitle: "21 April 2026", images: ["image5.jpeg", "section41.jpeg", "section42.jpeg"] },
   { id: 6, title: "Falling In Love ❤️", subtitle: "Long Calls & Video Calls", images: ["image6.jpeg", "section51.jpeg", "section52.jpeg"] },
   { id: 7, title: "Seeing You In Lehenga ❤️", subtitle: "Delhi Meeting", images: ["image7.jpeg", "section61.jpeg", "section62.jpeg"] },
-  { id: 8, title: "The Birthday Surprise ❤️", subtitle: "The Most Emotional Moment", images: ["image8.jpeg", "section71.jpeg", "section72.jpeg", "section73.jpeg"] },
+  { id: 8, title: "The Birthday Surprise ❤️", subtitle: "The Most Emotional Moment", images: ["image8.jpeg", "section71temp.jpeg", "section72.jpeg"] },
   { id: 9, title: "HAPPY BIRTHDAY MY LOVE ❤️", subtitle: "Forever & Always", images: ["image9.jpeg"] },
 ];
 
